@@ -27,10 +27,10 @@ c.execute('''
 CREATE TABLE IF NOT EXISTS match(
 	id INTEGER  PRIMARY KEY    NOT NULL,
 	radiant_win       CHAR(1)  NOT NULL,
-	radiant_teamid    TEXT     NOT NULL,
-	dire_teamid       TEXT     NOT NULL,
-	FOREIGN KEY(radiant_teamid) REFERENCES team(id),
-	FOREIGN KEY(dire_teamid) REFERENCES team(id)
+	radiant_team_id    TEXT     NOT NULL,
+	dire_team_id       TEXT     NOT NULL,
+	FOREIGN KEY(radiant_team_id) REFERENCES team(id),
+	FOREIGN KEY(dire_team_id) REFERENCES team(id)
 )''')
 
 c.execute('''

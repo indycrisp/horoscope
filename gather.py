@@ -174,7 +174,7 @@ VALUES
 
 c.executemany('''
 INSERT INTO match 
-	(id, radiant_win, radiant_teamid, dire_teamid)
+	(id, radiant_win, radiant_team_id, dire_team_id)
 VALUES
 	(?,?,?,?)
 ''', match_rows)
