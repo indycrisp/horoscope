@@ -168,7 +168,7 @@ class PlayerMatch():
         self.hero_damage   = int(data['hero_damage'])
         self.tower_damage  = int(data['tower_damage'])
         self.hero_healing  = int(data['hero_healing'])
-        self.game_stats    = [self.kills, self.deaths, self.assists, self.last_hits, self.denies, self.gpm, self.xpm, self.hero_damage, self.hero_healing]
+        self.game_stats    = [self.kills, self.deaths, self.gpm, self.xpm]
 
         #TODO: WHY ARE THERE MORE LOSSES THAN WINS TOTAL
         if (
@@ -216,7 +216,7 @@ if __name__ == '__main__':
 
     #TODO: figure out what to give the classifier for upcoming matches.  right now it's an avg stats of the players on each team
     test_team_1 = Team.find(39) #EG
-    test_team_2 = Team.find(40) #VP
+    test_team_2 = Team.find(1333179) #C9
     
     test_team_1_stats = [[stat * player.rpi for stat in player.avg_stats] for player in test_team_1.players[:5]]
     test_team_2_stats = [[stat * player.rpi for stat in player.avg_stats] for player in test_team_2.players[:5]]
