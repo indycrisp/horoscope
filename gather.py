@@ -43,7 +43,7 @@ match_direid = {}
 match_ids = []
 team_ids = []
 league_count = 1
-league_ids = [1936, 104, 1350, 1886, 2096]
+league_ids = [1936, 104, 1350, 1886, 1942, 1761, 1887, 1663, 1803, 1709, 2190, 2032, 2013, 2045, 2096]
 for league_id in league_ids:
 	print("getting matches for league " + str(league_count) + "/" + str(len(league_ids)), end="\r")
 	matches_response = requests.get(STEAM_BASE_URL + 'GetMatchHistory/V001/' + '?league_id=' + str(league_id) + '&key=' + STEAM_KEY)
