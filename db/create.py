@@ -18,9 +18,7 @@ CREATE TABLE IF NOT EXISTS team(
 
 c.execute('''
 CREATE TABLE IF NOT EXISTS player(
-	id INTEGER  PRIMARY KEY    NOT NULL,
-	team_id           INT      NOT NULL,
-	FOREIGN KEY(team_id) REFERENCES team(id)
+	id INTEGER  PRIMARY KEY    NOT NULL
 )''')
 
 c.execute('''
@@ -29,6 +27,7 @@ CREATE TABLE IF NOT EXISTS match(
 	radiant_win       CHAR(1)  NOT NULL,
 	radiant_team_id     INT    NOT NULL,
 	dire_team_id        INT    NOT NULL,
+	start_time          INT    NOT NULL,
 	FOREIGN KEY(radiant_team_id) REFERENCES team(id),
 	FOREIGN KEY(dire_team_id) REFERENCES team(id)
 )''')
@@ -38,6 +37,7 @@ CREATE TABLE IF NOT EXISTS playermatch(
 	id INTEGER   PRIMARY KEY AUTOINCREMENT,
 	player_id        INT      NOT NULL,
 	match_id         INT      NOT NULL,
+	team_id          INT      NOT NULL,
 	hero_id          INT      NOT NULL,
 	kills            INT,
 	deaths           INT,
@@ -53,7 +53,8 @@ CREATE TABLE IF NOT EXISTS playermatch(
 	hero_healing     INT,
 	level            INT,
 	FOREIGN KEY(player_id) REFERENCES player(id),
-	FOREIGN KEY(match_id)  REFERENCES match(id)
+	FOREIGN KEY(match_id)  REFERENCES match(id),
+	FOREIGN KEY(team_id)   REFERENCES team(id)
 )''')
 
 conn.commit()

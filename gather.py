@@ -31,15 +31,10 @@ print("getting leagues...")
 leagues_response = requests.get(STEAM_BASE_URL + 'GetLeagueListing/V001/?key=' + STEAM_KEY)
 print("done")
 
-#league_ids = []
-#for league in leagues_response.json()['result']['leagues']:
-#	id = league['leagueid']
-#	if id >= MIN_LEAGUE_ID:
-#		league_ids.append(id)
-
 # get match ids from each league
 match_radiantid = {}
 match_direid = {}
+match_start_time = {}
 match_ids = []
 team_ids = []
 league_count = 1
@@ -57,6 +52,7 @@ for league_id in league_ids:
 			match_direid[match_id] = match['dire_team_id']
 			team_ids.append(match['radiant_team_id'])
 			team_ids.append(match['dire_team_id'])
+			match_start_time[match_id] = match['start_time']
 
 	league_count += 1
 
@@ -98,7 +94,8 @@ for match_id in match_ids:
 			match_id,
 			'Y' if match['radiant_win'] else 'N',
 			match_radiantid[match_id],
-			match_direid[match_id]
+			match_direid[match_id],
+			match_start_time[match_id]
 		)
 	)
 
@@ -111,13 +108,7 @@ for match_id in match_ids:
 			team_id = match_radiantid[match_id]
 
 		if player['account_id'] not in seen_players.keys():
-			player_rows.append(
-				(
-					player['account_id'],
-					team_id				
-				)
-			)
-
+			player_rows.append([player['account_id']])
 			seen_players[player['account_id']] = 1
 	
 	
@@ -125,6 +116,7 @@ for match_id in match_ids:
 			(
 				player['account_id'],
 				match_id,
+				team_id,
 				player['hero_id'],
 				player['kills'],
 				player['deaths'],
@@ -174,23 +166,24 @@ VALUES
 
 c.executemany('''
 INSERT INTO match 
-	(id, radiant_win, radiant_team_id, dire_team_id)
+	(id, radiant_win, radiant_team_id, dire_team_id, start_time)
 VALUES
-	(?,?,?,?)
+	(?,?,?,?,?)
 ''', match_rows)
 
+#TODO: get player name
 c.executemany('''
 INSERT INTO player 
-	(id, team_id)
+	(id)
 VALUES
-	(?,?)
+	(?)
 ''', player_rows)
 
 c.executemany('''
 INSERT INTO playermatch
-	(id, player_id, match_id, hero_id, kills, deaths, assists, gold, last_hits, denies, gpm, xpm, gold_spent, hero_damage, tower_damage, hero_healing, level)
+	(id, player_id, match_id, team_id, hero_id, kills, deaths, assists, gold, last_hits, denies, gpm, xpm, gold_spent, hero_damage, tower_damage, hero_healing, level)
 VALUES
-	(NULL,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+	(NULL,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
 ''', playermatch_rows)
 
 print("done")
