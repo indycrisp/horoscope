@@ -13,12 +13,23 @@ CREATE TABLE IF NOT EXISTS hero(
 c.execute('''
 CREATE TABLE IF NOT EXISTS team(
 	id INT   PRIMARY KEY     NOT NULL,
-	name             TEXT    NOT NULL 
+	name             TEXT    NOT NULL,
+	player1_id       INT     NOT NULL,
+	player2_id       INT     NOT NULL,
+	player3_id       INT     NOT NULL,
+	player4_id       INT     NOT NULL,
+	player5_id       INT     NOT NULL,
+	FOREIGN KEY(player1_id) REFERENCES player(id),
+	FOREIGN KEY(player2_id) REFERENCES player(id),
+	FOREIGN KEY(player3_id) REFERENCES player(id),
+	FOREIGN KEY(player4_id) REFERENCES player(id),
+	FOREIGN KEY(player5_id) REFERENCES player(id)
 )''')
 
 c.execute('''
 CREATE TABLE IF NOT EXISTS player(
-	id INTEGER  PRIMARY KEY    NOT NULL
+	id INTEGER  PRIMARY KEY    NOT NULL,
+	name             TEXT
 )''')
 
 c.execute('''

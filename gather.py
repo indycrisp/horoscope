@@ -4,7 +4,6 @@ import sqlite3
 
 STEAM_KEY = '5D95A220441B79EDA8540E98E670082E'
 STEAM_BASE_URL = 'https://api.steampowered.com/IDOTA2Match_570/'
-MIN_LEAGUE_ID = 1936
 
 hero_rows = []
 match_rows = []
@@ -69,21 +68,21 @@ for team_id in unique_team_ids:
 	teams = team_response.json()['result']
 	for team in teams['teams']:
 		team_rows.append(
-			(
+			[
 				team_id,
 				team['name']
-			)
+			]
 		)
 
 	team_count += 1
-	
 
 print("done teams")
 
 # get match details for each match id
+team_recent_player_map = {}
 seen_players = {}
 match_count = 1
-for match_id in match_ids:
+for match_id in sorted(match_ids):
 	print("getting match details for match " + str(match_count) + "/" + str(len(match_ids)), end="\r")	
 	match_response = requests.get(STEAM_BASE_URL + 'GetMatchDetails/V001/' + '?match_id=' + str(match_id) + '&key=' + STEAM_KEY)
 
@@ -99,6 +98,12 @@ for match_id in match_ids:
 		)
 	)
 
+	if match_direid[match_id] not in team_recent_player_map or len(team_recent_player_map[match_direid[match_id]]) == 5:
+		team_recent_player_map[match_direid[match_id]] = []
+	
+	if match_radiantid[match_id] not in team_recent_player_map or len(team_recent_player_map[match_radiantid[match_id]]) == 5:
+		team_recent_player_map[match_radiantid[match_id]] = []
+
 	# player and playermatch data
 	for player in match['players']:
 		team_id = 0
@@ -106,12 +111,12 @@ for match_id in match_ids:
 			team_id = match_direid[match_id]
 		else:
 			team_id = match_radiantid[match_id]
-
-		if player['account_id'] not in seen_players.keys():
+		
+		team_recent_player_map[team_id].append(player['account_id'])
+		if player['account_id'] not in seen_players:
 			player_rows.append([player['account_id']])
 			seen_players[player['account_id']] = 1
-	
-	
+
 		playermatch_rows.append(
 			(
 				player['account_id'],
@@ -136,6 +141,11 @@ for match_id in match_ids:
 	
 	match_count += 1
 
+for row in team_rows:
+	for i in range(len(team_recent_player_map[row[0]])):
+		row.append(team_recent_player_map[row[0]][i])
+	
+
 print("done matches")
 
 # DB transaction
@@ -159,9 +169,9 @@ VALUES
 ''', hero_rows)
 c.executemany('''
 INSERT INTO team
-	(id, name)
+	(id, name, player1_id, player2_id, player3_id, player4_id, player5_id)
 VALUES
-	(?,?)
+	(?,?,?,?,?,?,?)
 ''', team_rows)
 
 c.executemany('''
