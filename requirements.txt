@@ -3,7 +3,7 @@ Flask==0.10.1
 Jinja2==2.7.3
 Mako==0.9.1
 MarkupSafe==0.18
-Werkzeug==0.9.6
+Werkzeug==0.15.3
 apturl==0.5.2ubuntu4
 chardet==2.0.1
 checkbox-ng==0.3
